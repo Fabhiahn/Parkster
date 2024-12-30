@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-manager
+spec:
+#  replicas: 2
+  selector:
+    matchLabels:
+      app: user-manager
+  template:
+    metadata:
+      labels:
+        app: user-manager
+    spec:
+      containers:
+      - name: user-manager
+        image: fabhiahn/parkster-login:v1.4
+        ports:
+        - containerPort: 5000
+        env:
+        - name: SQLALCHEMY_DATABASE_URI
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: SQLALCHEMY_DATABASE_URI
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: JWT_SECRET_KEY
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-service
+spec:
+  type: ClusterIP
+  selector:
+    app: user-manager
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
