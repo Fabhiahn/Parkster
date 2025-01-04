@@ -33,14 +33,11 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/parkster-login:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
 
-      - name: Set up kubeconfig
+      - name: Set up kubeconfig and deploy
         run: |
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG" > ~/.kube/config
           chmod 600 ~/.kube/config
-
-      - name: Deploy to Kubernetes
-        run: |
           kubectl --kubeconfig=~/.kube/config set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
           kubectl --kubeconfig=~/.kube/config rollout status deployment/user-management-deployment
 
