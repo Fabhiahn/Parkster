@@ -12,7 +12,7 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PAT }}
   KUBE_TOKEN: ${{ secrets.KUBE_CONFIG }}
-  KUBE_API_SERVER: ${{ secrets.K8S_API_SERVER }}
+  KUBE_API_SERVER: ${{ secrets.K8S_SERVER }}
 
 jobs:
   build-and-push:
