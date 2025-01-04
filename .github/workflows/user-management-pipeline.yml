@@ -36,8 +36,8 @@ jobs:
 
       - name: Set up kubeconfig and deploy
         run: |
-          kubectl config set-credentials github-actions --token="${{ secrets.KUBE_TOKEN }}"
-          kubectl config set-cluster my-cluster --server="${{ secrets.KUBE_API_SERVER }}" --insecure-skip-tls-verify
+          kubectl config set-credentials github-actions --token="${{ secrets.KUBE_CONFIG }}"
+          kubectl config set-cluster my-cluster --server="${{ secrets.K8S_SERVER }}" --insecure-skip-tls-verify
           kubectl config set-context github-actions --cluster=my-cluster --user=github-actions
           kubectl config use-context github-actions
           kubectl set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
