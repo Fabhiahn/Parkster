@@ -11,7 +11,8 @@ on:
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PAT }}
-  KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  KUBE_TOKEN: ${{ secrets.KUBE_CONFIG }}
+  KUBE_API_SERVER: ${{ secrets.K8S_API_SERVER }}
 
 jobs:
   build-and-push:
@@ -35,10 +36,11 @@ jobs:
 
       - name: Set up kubeconfig and deploy
         run: |
-          mkdir -p ~/.kube
-          echo "$KUBE_CONFIG" > ~/.kube/config
-          chmod 600 ~/.kube/config
-          kubectl --kubeconfig=~/.kube/config set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
-          kubectl --kubeconfig=~/.kube/config rollout status deployment/user-management-deployment
+          kubectl config set-credentials github-actions --token="${{ secrets.KUBE_TOKEN }}"
+          kubectl config set-cluster my-cluster --server="${{ secrets.KUBE_API_SERVER }}" --insecure-skip-tls-verify
+          kubectl config set-context github-actions --cluster=my-cluster --user=github-actions
+          kubectl config use-context github-actions
+          kubectl set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
+          kubectl rollout status deployment/user-management-deployment
 
       
