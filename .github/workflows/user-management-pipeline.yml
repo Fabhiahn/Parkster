@@ -1,14 +1,11 @@
-name: Build and Push Docker Images
+name: User Management pipeline
 
 on:
   push:
     branches:
-      - master
       - main
     paths:
       - 'microservices/user-management-service/**'
-      - 'microservices/parking-service/**'
-      - 'frontend/**'
   workflow_dispatch:
 
 env:
@@ -35,18 +32,15 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/parkster-login:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
 
-      - name: Build and push parking-service image
-        working-directory: microservices/parking-service
+      - name: Set up kubeconfig
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/parkster-table:latest .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/parkster-table:latest ${{ secrets.DOCKER_USERNAME }}/parkster-table:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-table:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-table:${{ github.sha }}
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" > ~/.kube/config
+          chmod 600 ~/.kube/config
 
-      - name: Build and push frontend image
-        working-directory: frontend
+      - name: Deploy to Kubernetes
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:latest .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:latest ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:${{ github.sha }}
+          kubectl set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
+          kubectl rollout status deployment/user-management-deployment
+
+      
