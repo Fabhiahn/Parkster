@@ -40,7 +40,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
-          kubectl rollout status deployment/user-management-deployment
+          kubectl --kubeconfig=~/.kube/config set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
+          kubectl --kubeconfig=~/.kube/config rollout status deployment/user-management-deployment
 
       
