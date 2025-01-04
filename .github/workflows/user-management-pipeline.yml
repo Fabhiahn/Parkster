@@ -41,6 +41,6 @@ jobs:
           kubectl config set-context github-actions --cluster=my-cluster --user=github-actions
           kubectl config use-context github-actions
           kubectl set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
-          kubectl rollout status deployment/user-management-deployment
+          kubectl rollout status deployment/user-manager
 
       
