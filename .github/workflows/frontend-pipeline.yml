@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'microservices/user-management-service/**'
+      - 'frontend/**'
   workflow_dispatch:
 
 env:
@@ -26,13 +26,13 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PAT }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build and push user-management-service image
-        working-directory: microservices/user-management-service
+      - name: Build and push parking-service image
+        working-directory: frontend
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/parkster-login:latest .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/parkster-login:latest ${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-login:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:latest .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:latest ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/parkster-frontend:${{ github.sha }}
 
       - name: Set up kubeconfig
         run: |
@@ -46,10 +46,10 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       - name: Deploy using Helm
-        working-directory: helm-charts
+        working-directory: "helm charts"
         run: |
-          helm upgrade login ./users \
-            --values users/prod-value.yaml
+          helm upgrade frontend ./frontend \
+            --values frontend/prod-values.yaml \
             --set image.tag=${{ github.sha }} \
             --set image.pullPolicy=Always
       
