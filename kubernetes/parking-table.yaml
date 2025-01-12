@@ -14,9 +14,21 @@ spec:
     spec:
       containers:
       - name: parking-table
-        image: fabhiahn/parkster-table:v1.2
+        image: fabhiahn/parkster-table:v1.3
         ports:
         - containerPort: 5001
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 5001
+          initialDelaySeconds: 10
+          periodSeconds: 120
         env:
         - name: JWT_SECRET_KEY
           valueFrom:

@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: user-manager-monitor
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: user-manager
+  endpoints:
+    - port: endpoint
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: parking-monitor
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: parking-table
+  endpoints:
+    - port: endpoint
+      path: /metrics
+      interval: 15s

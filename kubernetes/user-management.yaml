@@ -14,9 +14,21 @@ spec:
     spec:
       containers:
       - name: user-manager
-        image: fabhiahn/parkster-login:v1.4
+        image: fabhiahn/parkster-login:v1.6
         ports:
         - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 2
+          periodSeconds: 5
         env:
         - name: SQLALCHEMY_DATABASE_URI
           valueFrom:

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: fabhiahn/parkster-frontend:v1.5.2
+        image: fabhiahn/parkster-table:1.7
         ports:
         - containerPort: 80
 ---
