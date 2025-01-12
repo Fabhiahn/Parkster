@@ -49,7 +49,7 @@ jobs:
         working-directory: "helm charts"
         run: |
           helm upgrade frontend ./frontend \
-            --values frontend/dev-values.yaml \
+            --values frontend/prod-values.yaml \
             --set image.tag=${{ github.sha }} \
             --set image.pullPolicy=Always
       

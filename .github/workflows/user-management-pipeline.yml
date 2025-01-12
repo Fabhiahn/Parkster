@@ -49,7 +49,7 @@ jobs:
         working-directory: "helm charts"
         run: |
           helm upgrade login ./users \
-            --values users/dev-value.yaml \
+            --values users/prod-values.yaml \
             --set image.tag=${{ github.sha }} \
             --set image.pullPolicy=Always
       
