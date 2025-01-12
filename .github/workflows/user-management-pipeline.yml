@@ -46,10 +46,10 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       - name: Deploy using Helm
-        working-directory: helm-charts
+        working-directory: "helm charts"
         run: |
           helm upgrade login ./users \
-            --values users/prod-value.yaml
+            --values users/prod-value.yaml \
             --set image.tag=${{ github.sha }} \
             --set image.pullPolicy=Always
       
