@@ -3,8 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token
 from flask_cors import CORS
+from sqlalchemy import text
+from prometheus_flask_exporter import PrometheusMetrics
 import logging
 import os
+import requests
 
 # Initialize app and extensions 
 app = Flask(__name__)
@@ -19,6 +22,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default_secret_key')
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+metrics = PrometheusMetrics(app)
 
 # User model
 class User(db.Model):
@@ -52,14 +56,14 @@ def signup():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
-
     # Validate input
     if not username or not email or not password:
         return jsonify({"error": "All fields are required"}), 400
-
+    
+    print("ena")
     # Check if user already exists
     if User.query.filter((User.username == username) | (User.email == email)).first():
-        return jsonify({"error": "User already exists"}), 400
+        return jsonify({"error": "User already exists"}), 401
 
     # Hash the password and save the user
     password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -72,7 +76,6 @@ def signup():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
-    print(data)
     username = data.get('username')
     password = data.get('password')
 
@@ -86,6 +89,23 @@ def login():
         return jsonify({"error": "Invalid username or password"}), 401
 
     # Generate a JWT token
-    access_token = create_access_token(identity=str(user.id))
-    print(access_token)
-    return jsonify({"access_token": access_token}), 200
+#    access_token = create_access_token(identity=str(user.id))
+
+#    print(access_token)
+    response = requests.post("https://faas-fra1-afec6ce7.doserverless.co/api/v1/web/fn-fefebe31-35d5-4848-a8c6-993ba440359d/default/sendEmail", json=data)
+    #return jsonify({"access_token": access_token}), 200
+    if response.status_code == 200:
+        return jsonify(response.json()), 200
+    else:
+        return jsonify(response.json()), response.status_code
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    try:
+        # Perform a simple database query to ensure the DB is reachable
+        db.session.execute(text('SELECT 1'))
+
+        return jsonify({"status": "healthy"}), 200
+    except Exception as e:
+        return jsonify({"status": "unhealthy", "error": str(e)}), 500
+    
