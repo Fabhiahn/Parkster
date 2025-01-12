@@ -40,7 +40,16 @@ jobs:
           kubectl config set-cluster my-cluster --server="${{ secrets.K8S_SERVER }}" --insecure-skip-tls-verify
           kubectl config set-context github-actions --cluster=my-cluster --user=github-actions
           kubectl config use-context github-actions
-          kubectl set image deployment/user-manager user-manager=${{ secrets.DOCKER_USERNAME }}/parkster-login:${{ github.sha }}
-          kubectl rollout status deployment/user-manager
 
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Deploy using Helm
+        working-directory: helm-charts
+        run: |
+          helm upgrade login ./users \
+            --values users/prod-value.yaml
+            --set image.tag=${{ github.sha }} \
+            --set image.pullPolicy=Always
       
