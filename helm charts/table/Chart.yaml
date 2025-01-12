@@ -1,0 +1,6 @@
+apiVersion: v2
+name: parking-table
+description: A Helm chart for parking table deployment and service
+type: application
+version: 0.1.0
+appVersion: "1.5.0"

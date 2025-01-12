@@ -1,0 +1,31 @@
+replicaCount: 1
+
+image:
+  repository: fabhiahn/parkster-login
+  tag: v1.7.2
+  pullPolicy: IfNotPresent
+
+service:
+  name: login-service
+  type: ClusterIP
+  port: 5000
+
+
+livenessProbe:
+  path: /health
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  path: /health
+  initialDelaySeconds: 2
+  periodSeconds: 10
+
+env:
+  secrets:
+    SQLALCHEMY_DATABASE_URI:
+      name: backend-secrets
+      key: SQLALCHEMY_DATABASE_URI
+    JWT_SECRET_KEY:
+      name: backend-secrets
+      key: JWT_SECRET_KEY

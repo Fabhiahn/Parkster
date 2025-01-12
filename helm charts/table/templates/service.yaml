@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-parking-service
+  labels:
+    app: parking-table
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: parking-table
+  ports:
+  - name: endpoint
+    protocol: TCP
+    port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.port }}

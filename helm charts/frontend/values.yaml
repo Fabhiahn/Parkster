@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: fabhiahn/parkster-frontend
+  tag: v1.5.5
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80

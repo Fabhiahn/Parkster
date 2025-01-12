@@ -1,0 +1,27 @@
+replicaCount: 3
+
+image:
+  repository: fabhiahn/parkster-table
+  tag: v1.5
+  pullPolicy: IfNotPresent
+
+service:
+  name: parking-service
+  type: ClusterIP
+  port: 5001
+
+
+livenessProbe:
+  path: /health/liveness
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  path: /health/readiness
+  initialDelaySeconds: 10
+  periodSeconds: 120
+
+secret:
+  name: backend-secrets
+  keys:
+    jwtSecretKey: JWT_SECRET_KEY
