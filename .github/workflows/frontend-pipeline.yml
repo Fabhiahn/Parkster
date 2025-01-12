@@ -1,4 +1,4 @@
-name: User Management pipeline
+name: Frontend pipeline
 
 on:
   push:
@@ -49,7 +49,7 @@ jobs:
         working-directory: "helm charts"
         run: |
           helm upgrade frontend ./frontend \
-            --values frontend/prod-values.yaml \
+            --values frontend/dev-values.yaml \
             --set image.tag=${{ github.sha }} \
             --set image.pullPolicy=Always
       
