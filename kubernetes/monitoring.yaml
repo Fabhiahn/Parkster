@@ -27,3 +27,18 @@ spec:
     - port: endpoint
       path: /metrics
       interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fluentd-monitor
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fluentd
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
